@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="../bower_components/polymer/polymer.html" rel="import">
+    <link href="../bower_components/iron-localstorage/iron-localstorage.html" rel="import">
+</head>
+
+<dom-module id="todo-storage">
+    <template>
+        <iron-localstorage id="localStorage"
+                           name="{{localStorage}}"
+                           value="{{localList}}"
+                           on-iron-localstorage-load-empty="initializeDefaultTodo"></iron-localstorage>
+    </template>
+</dom-module>
+
+<script>
+    Polymer({
+        is: 'todo-storage',
+        properties: {
+            localList: {
+                notify: true,
+                type: Array,
+                value: []
+            },
+            localStorage: {
+                type: String
+            }
+        },
+        ready: function () {
+            this.localList = [];
+        },
+        todoChanged: function (todoList) {
+            //Call from outside
+        },
+        // initializes default if nothing has been stored
+        initializeDefaultTodo: function () {
+            this.localList = [];
+        },
+
+    });
+</script>

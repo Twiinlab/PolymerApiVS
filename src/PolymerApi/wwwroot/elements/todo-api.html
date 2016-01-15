@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="../../bower_components/polymer/polymer.html" rel="import">
+    <link href="../../bower_components/iron-ajax/iron-ajax.html" rel="import">
+</head>
+
+<dom-module id="todo-api">
+
+    <template>
+        <!--auto-->
+        <iron-ajax id="ajax"
+                   url="{{url}}"
+                   handle-as="json"
+                   params="{{options}}"
+                   on-response="hresponse"
+                   content-type="application/json"
+                   last-response="{{response}}"></iron-ajax>
+    </template>
+
+</dom-module>
+
+<script>
+
+    var baseUrl = "http://" + window.location.hostname + ":" + window.location.port
+
+    Polymer({
+
+        is: 'todo-api',
+        properties: {
+            owner: {
+                value: 'polymer',
+                notify: true
+            },
+            repo: {
+                value: 'polymer',
+                notify: true
+            },
+            state: {
+                value: 'open',
+                notify: true
+            },
+            page: {
+                value: 1,
+                notify: true
+            },
+            url: {
+                //computed: 'computeUrl(owner, repo)'
+            },
+
+            localList: {
+                notify: true,
+                type: Array,
+                value: []
+            }
+        },
+
+        //computeUrl: function (owner, repo) {
+        //    return [baseUrl, "api/todo"].join('/');
+        //},
+
+
+        setajax: function () {
+            this.$.ajax.url = "http://jsonplaceholder.typicode.com/posts";
+            this.$.ajax.generateRequest();
+        },
+        hresponse: function (request) {
+            //this.localList = request.detail.response;
+        },
+        ready: function (e) {
+            var ctx = this;
+            //init list
+            ctx.$.ajax.url = [baseUrl, "api/todo"].join('/');
+            var promise = ctx.$.ajax.generateRequest();
+            promise.completes.then(function (request) {
+                ctx.localList = request.response;
+            });
+
+            document.querySelector('todo-app').addEventListener('add', function (e) {
+                debugger;
+                ctx.$.ajax.url = [baseUrl, "api/todo"].join('/');
+                ctx.$.ajax.body = JSON.stringify({ user: e.detail.user, task: e.detail.task, rid: e.detail.rid });
+                ctx.$.ajax.method = "POST";
+                var promise = ctx.$.ajax.generateRequest();
+                promise.completes.then(function (request) {
+                    debugger;
+                    ctx.push("localList", { user: request.response.user, task: request.response.task, rid: request.response.rid });
+                });
+                //ctx.push("localList", { user: e.detail.user, task: e.detail.task, rid: e.detail.rid });
+            });
+            document.querySelector('todo-app').addEventListener('complete', function (e) {
+                debugger;
+            })
+        }
+       
+
+    });
+
+</script>
