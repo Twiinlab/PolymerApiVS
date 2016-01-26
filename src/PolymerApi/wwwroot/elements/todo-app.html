@@ -162,7 +162,7 @@
 			value: []
 		},
 		done:{
-			type:Array,
+			type: Array,
 			value: []
 		},
 		done2:{
@@ -173,7 +173,6 @@
     handleComplete: function(e){
 
 	    var idx = findWithAttr(this.todo, 'rid',e.target.rid);
-				    
 	    if (idx == -1){return;}
 	    var itm = this.splice('todo', idx, 1)[0];
 	    itm.task = e.target.task;
@@ -182,12 +181,14 @@
     },
     handleEdit: function(e){
 
-	    var idx = findWithAttr(this.todo, 'rid',e.target.rid);
-		if (idx == -1){return;}
-		var itm = this.splice('todo', idx, 1)[0];
-	    itm.task = e.target.task;
-	    itm.user = e.target.user;
-		this.unshift('todo',{task:itm.task, user:itm.user, rid:itm.rid}); 
+        this.set('todo.' + e.target.rid, { task: e.target.task, user: e.target.user, rid: e.target.rid });
+
+	    //var idx = findWithAttr(this.todo, 'rid',e.target.rid);
+		//if (idx == -1){return;}
+		//var itm = this.splice('todo', idx, 1)[0];
+	    //itm.task = e.target.task;
+	    //itm.user = e.target.user;
+		//this.unshift('todo',{task:itm.task, user:itm.user, rid:itm.rid}); 
 
     },
     postTask: function(e) {
@@ -199,8 +200,8 @@
 		    return;
 		}
 	    if (usr==""){ usr = randItem(names1) + "-" + randItem(names2); }
-	    //var localtodo = this.push("todo", { user: usr, task: tsk, rid: this.todo.length });
-	    this.fire('add', { user: usr, task: tsk, rid: this.todo.length });
+	    var localtodo = this.push("todo", { user: usr, task: tsk, rid: this.todo.length });
+	    //this.fire('add', { user: usr, task: tsk, rid: this.todo.length });
 	    this.$.tTask.value = "";
 
     },

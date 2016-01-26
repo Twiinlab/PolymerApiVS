@@ -55,6 +55,49 @@
             }
         },
 
+        observers: [
+            'listChange(localList.*)'
+        ],
+
+        listChange: function(changeRecord) {
+            if (changeRecord.path == 'localList.splices') {
+                // a user was added or removed
+                var _this = this;
+                changeRecord.value.indexSplices.forEach(function (s) {
+                    
+                    s.removed.forEach(function (item) {
+                        console.log("id:" + item.rid + " task: " + item.task + " - by" + item.user + ' was removed');
+                        
+                        _this.$.ajax.url = [baseUrl, "api/todo", item.rid].join('/');
+                        _this.$.ajax.method = "DELETE";
+                        _this.$.ajax.generateRequest();
+                    });
+                    if (s.addedCount > 0)
+                        console.log("id:" + s.object[s.index].rid + " task: " + s.object[s.index].task + " - by " + s.object[s.index].user + ' was added');
+
+                        this.$.ajax.url = [baseUrl, "api/todo"].join('/');
+                        this.$.ajax.body = JSON.stringify({ rid: s.object[s.index].rid, user: s.object[s.index].user, task: s.object[s.index].task });
+                        this.$.ajax.method = "POST";
+                        this.$.ajax.generateRequest()
+                        //this.$.ajax.generateRequest().completes.then(function (request) {
+                        //    _this.push("localList", { user: request.response.user, task: request.response.task, rid: request.response.rid });
+                        //});
+                }, this);
+
+            } else {
+                // an individual user or its sub-properties changed
+                // check "changeRecord.path" to determine what changed
+                if (changeRecord.value.rid != null) {
+                    console.log("id:" + changeRecord.value.rid + " task: " + changeRecord.value.task + " - by " + changeRecord.value.user + ' changed');
+
+                    this.$.ajax.url = [baseUrl, "api/todo", changeRecord.value.rid].join('/');
+                    this.$.ajax.body = JSON.stringify({ rid: changeRecord.value.rid, user: changeRecord.value.user, task: changeRecord.value.task });
+                    this.$.ajax.method = "PUT";
+                    this.$.ajax.generateRequest()
+                }
+            }
+        },
+
         //computeUrl: function (owner, repo) {
         //    return [baseUrl, "api/todo"].join('/');
         //},
@@ -76,21 +119,18 @@
                 ctx.localList = request.response;
             });
 
-            document.querySelector('todo-app').addEventListener('add', function (e) {
-                debugger;
-                ctx.$.ajax.url = [baseUrl, "api/todo"].join('/');
-                ctx.$.ajax.body = JSON.stringify({ user: e.detail.user, task: e.detail.task, rid: e.detail.rid });
-                ctx.$.ajax.method = "POST";
-                var promise = ctx.$.ajax.generateRequest();
-                promise.completes.then(function (request) {
-                    debugger;
-                    ctx.push("localList", { user: request.response.user, task: request.response.task, rid: request.response.rid });
-                });
-                //ctx.push("localList", { user: e.detail.user, task: e.detail.task, rid: e.detail.rid });
-            });
-            document.querySelector('todo-app').addEventListener('complete', function (e) {
-                debugger;
-            })
+            //document.querySelector('todo-app').addEventListener('add', function (e) {
+            //    ctx.$.ajax.url = [baseUrl, "api/todo"].join('/');
+            //    ctx.$.ajax.body = JSON.stringify({ user: e.detail.user, task: e.detail.task, rid: e.detail.rid });
+            //    ctx.$.ajax.method = "POST";
+            //    var promise = ctx.$.ajax.generateRequest();
+            //    promise.completes.then(function (request) {
+            //        ctx.push("localList", { user: request.response.user, task: request.response.task, rid: request.response.rid });
+            //    });
+            //});
+            //document.querySelector('todo-app').addEventListener('complete', function (e) {
+                
+            //})
         }
        
 

@@ -27,7 +27,7 @@ namespace PolymerApi.Controllers
         }
 
         // GET api/values/5
-        [HttpGet("{id;int}")]
+        [HttpGet("{id:int}")]
         public IActionResult Get(int id)
         {
             return new ObjectResult(todolist[id]);
@@ -38,7 +38,8 @@ namespace PolymerApi.Controllers
         [HttpPut("{id:int}")]
         public IActionResult Put(int id, [FromBody]Todo todo)
         {
-            todolist[todo.rid] = todo;
+            var index = todolist.FindIndex(row => row.rid == id);
+            todolist[index] = todo;
             return new ObjectResult(todo);
         }
 
@@ -46,7 +47,7 @@ namespace PolymerApi.Controllers
         [HttpPost]
         public IActionResult Post([FromBody]Todo todo)
         {
-            todo.rid = todolist.Count;
+            //todo.rid = todolist.Count;
             todolist.Add(todo);
             return new ObjectResult(todo);
         }
@@ -54,9 +55,10 @@ namespace PolymerApi.Controllers
 
         // DELETE api/values/5
         [HttpDelete("{id:int}")]
-        public IActionResult Delete(int rid)
+        public IActionResult Delete(int id)
         {
-            todolist.RemoveAt(rid);
+            var index = todolist.FindIndex(row => row.rid == id);
+            todolist.RemoveAt(index);
             return new HttpStatusCodeResult(200);
         }
     }
