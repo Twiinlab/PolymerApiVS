@@ -49,6 +49,7 @@ namespace PolymerApi.Controllers
         {
             //todo.rid = todolist.Count;
             todolist.Add(todo);
+            Console.WriteLine("Hello World");
             return new ObjectResult(todo);
         }
 
