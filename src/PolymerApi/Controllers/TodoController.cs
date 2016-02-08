@@ -31,7 +31,6 @@ namespace PolymerApi.Controllers
         public IActionResult Get(int id)
         {
             return new ObjectResult(todolist[id]);
-            //return "value";
         }
 
         // PUT api/values/5
@@ -47,9 +46,7 @@ namespace PolymerApi.Controllers
         [HttpPost]
         public IActionResult Post([FromBody]Todo todo)
         {
-            //todo.rid = todolist.Count;
             todolist.Add(todo);
-            Console.WriteLine("Hello World");
             return new ObjectResult(todo);
         }
 

@@ -10,12 +10,8 @@
     <template>
         <!--auto-->
         <iron-ajax id="ajax"
-                   url="{{url}}"
                    handle-as="json"
-                   params="{{options}}"
-                   on-response="hresponse"
-                   content-type="application/json"
-                   last-response="{{response}}"></iron-ajax>
+                   content-type="application/json"></iron-ajax>
     </template>
 
 </dom-module>
@@ -25,115 +21,59 @@
     var baseUrl = "http://" + window.location.hostname + ":" + window.location.port
 
     Polymer({
-
         is: 'todo-api',
         properties: {
-            owner: {
-                value: 'polymer',
-                notify: true
-            },
-            repo: {
-                value: 'polymer',
-                notify: true
-            },
-            state: {
-                value: 'open',
-                notify: true
-            },
-            page: {
-                value: 1,
-                notify: true
-            },
-            url: {
-                //computed: 'computeUrl(owner, repo)'
-            },
-
             localList: {
                 notify: true,
                 type: Array,
                 value: []
             }
         },
-
         observers: [
             'listChange(localList.*)'
         ],
 
-        listChange: function(changeRecord) {
+        listChange: function (changeRecord) {
             if (changeRecord.path == 'localList.splices') {
-                // a user was added or removed
+                // a task was added or removed
                 var _this = this;
                 changeRecord.value.indexSplices.forEach(function (s) {
-                    
                     s.removed.forEach(function (item) {
-                        console.log("id:" + item.rid + " task: " + item.task + " - by" + item.user + ' was removed');
-                        
+                        //Delete task
                         _this.$.ajax.url = [baseUrl, "api/todo", item.rid].join('/');
                         _this.$.ajax.method = "DELETE";
                         _this.$.ajax.generateRequest();
+                        console.log("id:" + item.rid + " task: " + item.task + " - by" + item.user + ' was removed');
                     });
-                    if (s.addedCount > 0)
-                        console.log("id:" + s.object[s.index].rid + " task: " + s.object[s.index].task + " - by " + s.object[s.index].user + ' was added');
-
+                    if (s.addedCount > 0) {
+                        //Add task
                         this.$.ajax.url = [baseUrl, "api/todo"].join('/');
                         this.$.ajax.body = JSON.stringify({ rid: s.object[s.index].rid, user: s.object[s.index].user, task: s.object[s.index].task });
                         this.$.ajax.method = "POST";
-                        this.$.ajax.generateRequest()
-                        //this.$.ajax.generateRequest().completes.then(function (request) {
-                        //    _this.push("localList", { user: request.response.user, task: request.response.task, rid: request.response.rid });
-                        //});
+                        this.$.ajax.generateRequest();
+                        console.log("id:" + s.object[s.index].rid + " task: " + s.object[s.index].task + " - by " + s.object[s.index].user + ' was added');
+                    }
                 }, this);
 
             } else {
-                // an individual user or its sub-properties changed
-                // check "changeRecord.path" to determine what changed
+                // an individual task or its properties changed
                 if (changeRecord.value.rid != null) {
-                    console.log("id:" + changeRecord.value.rid + " task: " + changeRecord.value.task + " - by " + changeRecord.value.user + ' changed');
-
                     this.$.ajax.url = [baseUrl, "api/todo", changeRecord.value.rid].join('/');
                     this.$.ajax.body = JSON.stringify({ rid: changeRecord.value.rid, user: changeRecord.value.user, task: changeRecord.value.task });
                     this.$.ajax.method = "PUT";
-                    this.$.ajax.generateRequest()
+                    this.$.ajax.generateRequest();
+                    console.log("id:" + changeRecord.value.rid + " task: " + changeRecord.value.task + " - by " + changeRecord.value.user + ' changed');
                 }
             }
         },
-
-        //computeUrl: function (owner, repo) {
-        //    return [baseUrl, "api/todo"].join('/');
-        //},
-
-
-        setajax: function () {
-            this.$.ajax.url = "http://jsonplaceholder.typicode.com/posts";
-            this.$.ajax.generateRequest();
-        },
-        hresponse: function (request) {
-            //this.localList = request.detail.response;
-        },
         ready: function (e) {
-            var ctx = this;
             //init list
-            ctx.$.ajax.url = [baseUrl, "api/todo"].join('/');
-            var promise = ctx.$.ajax.generateRequest();
-            promise.completes.then(function (request) {
-                ctx.localList = request.response;
+            var _this = this;
+            _this.$.ajax.url = [baseUrl, "api/todo"].join('/');
+            _this.$.ajax.generateRequest().completes.then(function (request) {
+                _this.localList = request.response;
             });
-
-            //document.querySelector('todo-app').addEventListener('add', function (e) {
-            //    ctx.$.ajax.url = [baseUrl, "api/todo"].join('/');
-            //    ctx.$.ajax.body = JSON.stringify({ user: e.detail.user, task: e.detail.task, rid: e.detail.rid });
-            //    ctx.$.ajax.method = "POST";
-            //    var promise = ctx.$.ajax.generateRequest();
-            //    promise.completes.then(function (request) {
-            //        ctx.push("localList", { user: request.response.user, task: request.response.task, rid: request.response.rid });
-            //    });
-            //});
-            //document.querySelector('todo-app').addEventListener('complete', function (e) {
-                
-            //})
         }
-       
-
     });
 
 </script>

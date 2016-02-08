@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 	<link href="../bower_components/polymer/polymer.html" rel="import">
 	<link href="../elements/todo-element.html" rel="import">
 	<link href="../elements/todo-storage.html" rel="import">
@@ -80,7 +79,7 @@
 	}
 
 	paper-toolbar {
-		background:#D32F2F;
+		background:#1832c2;
 	}
 	
 	#made-with {
@@ -100,35 +99,28 @@
 	</style>
   
 	<template>
-		
 		<paper-drawer-panel>
-
 			<paper-header-panel class="side-panel" drawer>
 				<paper-toolbar>
-					<paper-item>Completed Tasks 3</paper-item>
+					<paper-item>Completed Tasks</paper-item>
 				</paper-toolbar>
 				<paper-menu id="completed" class="list">
 					<template id="done" is="dom-repeat" items="{{done}}">
 						<paper-item>{{item.task}}<i style="margin-left: 5px;">{{item.user}}</i></paper-item>
 					</template>
-                    <template id="done" is="dom-repeat" items="{{done2}}">
-                        <paper-item>{{item.Task}}<i style="margin-left: 5px;">{{item.User}}</i></paper-item>
-                    </template>
 				</paper-menu>
 			</paper-header-panel>
 
 			<paper-header-panel main class="main-panel">
-
 				<paper-toolbar>
 					<paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
 					<paper-item>Active Tasks</paper-item>
 				</paper-toolbar>
 
 				<div style="border-left: 1px solid #ccc;">
-					<!-- To create a new Todo -->
 					<paper-material id="todoEntry" elevation="2">
 						<paper-input id="tTask" label="Task"></paper-input>
-						<paper-input id="tUser" char-counter label="Username" maxlength="16" error="maximum characters exceeded" style="width:75%;display: inline-block" ></paper-input> 
+						<paper-input id="tUser" char-counter label="Username" maxlength="20" error="maximum characters exceeded" style="width:75%;display: inline-block" ></paper-input> 
 						<paper-fab icon="icons:add" on-tap="postTask"></paper-fab>
 					</paper-material>
 
@@ -137,14 +129,16 @@
 							<todo-element user="{{item.user}}" task="{{item.task}}" rid="{{item.rid}}"></todo-element>
 						</template>
 					</div>
+
 				</div>
 
 			</paper-header-panel>
 
 		</paper-drawer-panel> 
-		<!--<todo-storage local-list="{{todo}}" local-storage="localTodo"></todo-storage>-->
+
 		<todo-storage local-list="{{done}}" local-storage="localDone"></todo-storage>
 		<todo-api local-list="{{todo}}" ></todo-api>
+
     </template>
 	</template>
 </dom-module>
@@ -164,10 +158,6 @@
 		done:{
 			type: Array,
 			value: []
-		},
-		done2:{
-			type:Array,
-			value: []
 		}
     },
     handleComplete: function(e){
@@ -180,16 +170,7 @@
 	    this.unshift('done',itm);
     },
     handleEdit: function(e){
-
         this.set('todo.' + e.target.rid, { task: e.target.task, user: e.target.user, rid: e.target.rid });
-
-	    //var idx = findWithAttr(this.todo, 'rid',e.target.rid);
-		//if (idx == -1){return;}
-		//var itm = this.splice('todo', idx, 1)[0];
-	    //itm.task = e.target.task;
-	    //itm.user = e.target.user;
-		//this.unshift('todo',{task:itm.task, user:itm.user, rid:itm.rid}); 
-
     },
     postTask: function(e) {
 
@@ -201,7 +182,6 @@
 		}
 	    if (usr==""){ usr = randItem(names1) + "-" + randItem(names2); }
 	    var localtodo = this.push("todo", { user: usr, task: tsk, rid: this.todo.length });
-	    //this.fire('add', { user: usr, task: tsk, rid: this.todo.length });
 	    this.$.tTask.value = "";
 
     },
