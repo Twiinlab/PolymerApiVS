@@ -34,44 +34,55 @@
         ],
 
         listChange: function (changeRecord) {
+            var _this = this;
             if (changeRecord.path == 'localList.splices') {
                 // a task was added or removed
-                var _this = this;
                 changeRecord.value.indexSplices.forEach(function (s) {
                     s.removed.forEach(function (item) {
                         //Delete task
-                        _this.$.ajax.url = [baseUrl, "api/todo", item.rid].join('/');
-                        _this.$.ajax.method = "DELETE";
-                        _this.$.ajax.generateRequest();
-                        console.log("id:" + item.rid + " task: " + item.task + " - by" + item.user + ' was removed');
+                        _this.deleteTask(item);
                     });
                     if (s.addedCount > 0) {
                         //Add task
-                        this.$.ajax.url = [baseUrl, "api/todo"].join('/');
-                        this.$.ajax.body = JSON.stringify({ rid: s.object[s.index].rid, user: s.object[s.index].user, task: s.object[s.index].task });
-                        this.$.ajax.method = "POST";
-                        this.$.ajax.generateRequest();
-                        console.log("id:" + s.object[s.index].rid + " task: " + s.object[s.index].task + " - by " + s.object[s.index].user + ' was added');
+                        _this.addTask(s);
                     }
                 }, this);
 
             } else {
                 // an individual task or its properties changed
                 if (changeRecord.value.rid != null) {
-                    this.$.ajax.url = [baseUrl, "api/todo", changeRecord.value.rid].join('/');
-                    this.$.ajax.body = JSON.stringify({ rid: changeRecord.value.rid, user: changeRecord.value.user, task: changeRecord.value.task });
-                    this.$.ajax.method = "PUT";
-                    this.$.ajax.generateRequest();
-                    console.log("id:" + changeRecord.value.rid + " task: " + changeRecord.value.task + " - by " + changeRecord.value.user + ' changed');
+                    _this.updateTask(changeRecord.value);
                 }
             }
+        },
+        addTask: function (task) {
+            this.$.ajax.url = [baseUrl, "api/todo"].join('/');
+            this.$.ajax.body = JSON.stringify({ rid: task.object[task.index].rid, user: task.object[task.index].user, task: task.object[task.index].task });
+            this.$.ajax.method = "POST";
+            this.$.ajax.generateRequest();
+            console.log("id:" + task.object[task.index].rid + " task: " + task.object[task.index].task + " - by " + task.object[task.index].user + ' was added');
+        },
+        deleteTask: function (task) {
+            this.$.ajax.url = [baseUrl, "api/todo", task.rid].join('/');
+            this.$.ajax.method = "DELETE";
+            this.$.ajax.generateRequest();
+            console.log("id:" + task.rid + " task: " + task.task + " - by" + task.user + ' was removed');
+        },
+        updateTask: function (task) {
+            this.$.ajax.url = [baseUrl, "api/todo", task.rid].join('/');
+            this.$.ajax.body = JSON.stringify({ rid: task.rid, user: task.user, task: task.task });
+            this.$.ajax.method = "PUT";
+            this.$.ajax.generateRequest();
+            console.log("id:" + task.rid + " task: " + task.task + " - by " + task.user + ' changed');
         },
         ready: function (e) {
             //init list
             var _this = this;
-            _this.$.ajax.url = [baseUrl, "api/todo"].join('/');
-            _this.$.ajax.generateRequest().completes.then(function (request) {
+            this.$.ajax.url = [baseUrl, "api/todo"].join('/');
+            this.$.ajax.method = "GET";
+            this.$.ajax.generateRequest().completes.then(function (request) {
                 _this.localList = request.response;
+                console.log(request.response.length + ' task element/s were loaded');
             });
         }
     });
