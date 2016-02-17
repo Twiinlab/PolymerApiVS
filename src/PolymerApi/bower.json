@@ -23,7 +23,6 @@
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#^1.0.0",
-    "pubnub-element": "~4.0.0",
     "iron-input": "polymerelements/iron-input#^1.0.0",
     "paper-checkbox": "polymerelements/paper-checkbox#^1.0.1",
     "paper-input": "polymerelements/paper-input#~1.0.5",
