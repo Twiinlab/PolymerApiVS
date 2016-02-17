@@ -25,4 +25,6 @@ dnvm use -r clr -arch x86 1.0.0-rc1-update1
 dnx web
 ```
 
+* Acceder a la App que se encuentra en la url [http://localhost:5000/](http://localhost:5000/)
+
 Espero que os resulte util
