@@ -10,12 +10,17 @@ Si queréis conocer más en detalle la estructura de la aplicación, podéis ech
 
 Para poner en marcha la aplicación desde línea de comandos, solo hay que seguir dos pasos:
 
-* Asegurarnos con que versión de dependencias estamos trabajando (ej: 1.0.0-rc1-update1):
+* Descargarse la versión especifica de DNX para .NET Framework: (ej: 1.0.0-rc1-update1)
+```
+dnvm install 1.0.0-rc1-update1
+```
+
+* Asegurarnos con que versión de dependencias estamos usando (ej: 1.0.0-rc1-update1):
 ```
 dnvm use -r clr -arch x86 1.0.0-rc1-update1
 ```
 
-* Levantar servidor web mendiante dnx:
+* Ejecutar la aplicación mendiante DNX:
 ```
 dnx web
 ```
